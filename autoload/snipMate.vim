@@ -438,7 +438,10 @@ fun! snipMate#GetSnippetsForWordBelowCursor(word, exact) abort
 	let parts = split(a:word, '\W\zs')
 	" Since '\W\zs' results in splitting *after* a non-keyword character, the
 	" first \W stays connected to whatever's before it, so split it off
-	if !empty(parts) && parts[0] =~ '\W$'
+	" Note that instead of \W, we used [^a-zA-Z0-9_.] instead because we 
+	" don't want '.' following a word to get expanded independently
+	" e.g. in python: 'self.' should not expand to 'selfself.'
+	if !empty(parts) && parts[0] =~ '[^a-zA-Z0-9_.]$'
 		let parts = [ parts[0][:-2], strpart(parts[0], len(parts[0]) - 1) ]
 					\ + parts[1:]
 	endif
